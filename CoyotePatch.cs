@@ -1,13 +1,6 @@
-﻿using DB;
-using HarmonyLib;
-using MAI2.Util;
+﻿using HarmonyLib;
 using Manager;
 using MelonLoader;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DG_CoyoteDX
 {
@@ -35,13 +28,13 @@ namespace DG_CoyoteDX
                     case NoteJudge.JudgeBox.Perfect:
                         break;
                     case NoteJudge.JudgeBox.Great:
-                        Melon<Core>.Instance.Punish(25, 25);
+                        Melon<Core>.Instance.Punish(25, 20);
                         break;
                     case NoteJudge.JudgeBox.Good:
-                        Melon<Core>.Instance.Punish(50, 25);
+                        Melon<Core>.Instance.Punish(50, 20);
                         break;
                     case NoteJudge.JudgeBox.Miss:
-                        Melon<Core>.Instance.Punish(100, 25);
+                        Melon<Core>.Instance.Punish(100, 20);
                         break;
                 }
             }

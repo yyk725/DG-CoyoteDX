@@ -2,7 +2,10 @@
 using Manager;
 using MelonLoader;
 using QRCoder;
+using System.Windows;
 using UnityEngine;
+using static DG_CoyoteDX.DGSocketServer;
+using Rect = UnityEngine.Rect;
 
 [assembly: MelonInfo(typeof(DG_CoyoteDX.Core), "DG-CoyoteDX", "1.0.0", "xiaodai", null)]
 [assembly: MelonGame("sega-interactive", "Sinmai")]
@@ -35,7 +38,7 @@ namespace DG_CoyoteDX
 
         public void Punish(int strength, int duration)
         {
-            wsServer.SendPulsesAsync(wsClientInfo.LinkId, DGSocketServer.Channel.A, new DGSocketServer.PulseBuilder().AddRamp(strength, 0, duration));
+            punishmentQueue.Add(new() { strength = strength, duration = duration });
         }
 
         private bool isConnected;
@@ -79,6 +82,22 @@ namespace DG_CoyoteDX
             {
                 wsServer.SendPulsesAsync(wsClientInfo.LinkId, DGSocketServer.Channel.A, new DGSocketServer.PulseBuilder().AddConstant(5, 20));
             }
+        }
+
+        // for all judgements in one frame, send one pulse only
+        struct PunishmentArgs
+        {
+            public int strength, duration;
+        };
+
+        private List<PunishmentArgs> punishmentQueue = new();
+
+        public override void OnUpdate()
+        {
+            int punishStrength = punishmentQueue.Max(obj => obj.strength);
+            var args = punishmentQueue.First(x => x.strength == punishStrength);
+            wsServer.SendPulsesAsync(wsClientInfo.LinkId, DGSocketServer.Channel.A, new DGSocketServer.PulseBuilder().AddRamp(args.strength, 0, args.duration));
+            punishmentQueue.Clear();
         }
 
     }
