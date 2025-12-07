@@ -28,6 +28,11 @@ namespace DG_CoyoteDX
                 LoggerInstance.Msg($"Bind OK: client={cid} <-> target={lid}");
                 isConnected = true;
             };
+            wsServer.OnDisconnect += (lid, cid) =>
+            {
+                LoggerInstance.Msg($"Disconnect: client={cid} <-> target={lid}");
+                isConnected = false;
+            };
             wsServer.OnAppMessage += msg => LoggerInstance.Msg($"APP->SERVER: {msg}");
             wsServer.Start();
             wsClientInfo = wsServer.CreateLink();
